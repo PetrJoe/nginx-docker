@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: nginx-server
+    env: docker
+    repo: https://github.com/yourusername/your-repo
+    plan: free
+    branch: master
+    dockerfilePath: ./Dockerfile
+    autoDeploy: true
+    envVars:
+      - key: ENV
+        value: production
+      - key: API_URL
+        value: https://api.yourdomain.com
+    healthCheckPath: /
+    healthCheckTimeout: 5s
