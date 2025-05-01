@@ -2,7 +2,7 @@ services:
   - type: web
     name: nginx-server
     env: docker
-    repo: https://github.com/yourusername/your-repo
+    repo: https://github.com/PetrJoe/nginx-docker
     plan: free
     branch: master
     dockerfilePath: ./Dockerfile
