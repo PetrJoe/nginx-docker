@@ -45,6 +45,45 @@ fi
 # Set the API_URL environment variable
 export API_URL=https://nginx-docker-xhl3.onrender.com
 
+# Create a new entrypoint script for the Nginx container
+cat > nginx-entrypoint.sh << 'EOF'
+#!/bin/sh
+set -e
+
+# Replace environment variables in the Nginx config template
+envsubst '${API_URL}' < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf
+
+# Start Nginx
+exec nginx -g 'daemon off;'
+EOF
+
+chmod +x nginx-entrypoint.sh
+
+# Update Dockerfile to use the entrypoint script
+cat > Dockerfile << 'EOF'
+FROM nginx:alpine
+
+# Remove default NGINX website
+RUN rm -rf /usr/share/nginx/html/*
+
+# Copy custom configuration file
+COPY default.conf /etc/nginx/conf.d/default.conf.template
+
+# Copy website files
+COPY public /usr/share/nginx/html
+
+# Copy and set permissions for the entrypoint script
+COPY nginx-entrypoint.sh /docker-entrypoint.sh
+RUN chmod +x /docker-entrypoint.sh
+
+# Install envsubst utility if not already included
+RUN apk add --no-cache bash
+
+EXPOSE 80
+
+CMD ["/docker-entrypoint.sh"]
+EOF
+
 # Build the Docker image
 docker build -t nginx-app .
 
@@ -55,15 +94,3 @@ docker run -d -p 80:80 -e API_URL=$API_URL --name nginx-container nginx-app
 docker ps
 
 echo "Deployment completed successfully!"
-
-
-#!/bin/bash
-
-# Build the Docker image from the Dockerfile
-docker build -t nginx-app .
-
-# Run the container, exposing port 80 and setting the API_URL environment variable
-docker run -d -p 80:80 -e API_URL=https://nginx-docker-xhl3.onrender.com --name nginx-container nginx-app
-
-# Check if the container is running
-docker ps
