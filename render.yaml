@@ -11,6 +11,6 @@ services:
       - key: ENV
         value: production
       - key: API_URL
-        value: https://api.yourdomain.com
+        value: https://nginx-docker-xhl3.onrender.com
     healthCheckPath: /
     healthCheckTimeout: 5s
