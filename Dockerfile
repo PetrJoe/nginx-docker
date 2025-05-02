@@ -18,6 +18,6 @@ RUN apk add --no-cache bash
 RUN echo '#!/bin/bash\n\
 envsubst < /etc/nginx/conf.d/default.conf.template > /etc/nginx/conf.d/default.conf\n\
 nginx -g "daemon off;"' > /docker-entrypoint.sh && \
-chmod +x docker-entrypoint.sh
+chmod +x /docker-entrypoint.sh
 
-CMD ["docker-entrypoint.sh"]
+CMD ["/docker-entrypoint.sh"]
